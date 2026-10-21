@@ -1,0 +1,59 @@
+{
+ "chapters": [
+  {
+   "num": 1,
+   "title": "Sistemul circulator (exemple demonstrative)",
+   "excl": "Exemplu: o temă din afara programei e marcată, nu ștearsă.",
+   "questions": [
+    {
+     "num": "1",
+     "stem": "Alegeți afirmația FALSĂ despre inimă:",
+     "options": {
+      "A": "are patru cavități: două atrii și două ventricule",
+      "B": "ventriculul stâng pompează sângele în aortă",
+      "C": "valva mitrală separă atriul drept de ventriculul drept",
+      "D": "atriile primesc sângele care se întoarce la inimă",
+      "E": "miocardul este țesut muscular striat de tip cardiac"
+     },
+     "answer": "C"
+    },
+    {
+     "num": "2",
+     "stem": "Următoarele afirmații sunt false, cu EXCEPȚIA:",
+     "options": {
+      "A": "arterele duc sângele spre inimă",
+      "B": "venele au, în general, pereți mai groși decât arterele",
+      "C": "la nivelul capilarelor au loc schimburile dintre sânge și țesuturi",
+      "D": "artera pulmonară transportă sânge bogat în oxigen",
+      "E": "hematiile adultului au nucleu"
+     },
+     "answer": "C"
+    },
+    {
+     "num": "3",
+     "stem": "Volumul de sânge expulzat de un ventricul la o singură contracție se numește:",
+     "options": {
+      "A": "debit cardiac",
+      "B": "volum sistolic",
+      "C": "frecvență cardiacă",
+      "D": "presiune arterială",
+      "E": "volum rezidual"
+     },
+     "answer": "B"
+    },
+    {
+     "num": "4",
+     "stem": "Șocul circulator se caracterizează prin:",
+     "options": {
+      "A": "creșterea perfuziei tisulare",
+      "B": "scăderea perfuziei tisulare",
+      "C": "scăderea frecvenței respiratorii la zero",
+      "D": "creșterea volumului sanguin",
+      "E": "absența oricărei modificări a tensiunii"
+     },
+     "answer": "B"
+    }
+   ]
+  }
+ ]
+}

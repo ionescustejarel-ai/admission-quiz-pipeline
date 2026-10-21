@@ -1,0 +1,46 @@
+[
+ {
+  "num": "1",
+  "subsection": "Inima",
+  "excluded": false,
+  "source": "exemplu",
+  "via": "exemplu demonstrativ",
+  "evidence": "Text demonstrativ: între atriul stâng și ventriculul stâng se află valva mitrală (bicuspidă); în dreapta se află valva tricuspidă.",
+  "page": null,
+  "why": "Valva mitrală este pe partea stângă a inimii, nu pe dreapta.",
+  "fix": "Valva mitrală (bicuspidă) separă atriul STÂNG de ventriculul stâng; între atriul drept și ventriculul drept se află valva tricuspidă."
+ },
+ {
+  "num": "2",
+  "subsection": "Vasele de sânge",
+  "excluded": false,
+  "source": "exemplu",
+  "via": "exemplu demonstrativ",
+  "evidence": "Text demonstrativ: capilarele au peretele format dintr-un singur strat de celule, ceea ce permite schimbul de gaze și substanțe.",
+  "page": null,
+  "why": "Singura afirmație adevărată este C; celelalte patru inversează un fapt de bază.",
+  "fix": "A — arterele duc sângele DE LA inimă spre țesuturi.\nB — arterele au pereți mai groși decât venele.\nC — adevărată: aceasta este excepția.\nD — artera pulmonară transportă sânge SĂRAC în oxigen.\nE — hematiile adultului NU au nucleu."
+ },
+ {
+  "num": "3",
+  "subsection": "Inima",
+  "excluded": false,
+  "source": "exemplu",
+  "via": "exemplu demonstrativ",
+  "evidence": "Text demonstrativ: volumul sistolic este cantitatea de sânge expulzată de un ventricul la o contracție.",
+  "page": null,
+  "why": "Debitul cardiac = volum sistolic × frecvență; volumul sistolic se referă la o singură contracție.",
+  "fix": ""
+ },
+ {
+  "num": "4",
+  "subsection": "Șocul (în afara programei — exemplu)",
+  "excluded": true,
+  "source": "exemplu",
+  "via": "exemplu demonstrativ",
+  "evidence": "",
+  "page": null,
+  "why": "Întrebare păstrată, dar marcată ca exclusă: arată cum aplicația tratează temele din afara programei.",
+  "fix": ""
+ }
+]

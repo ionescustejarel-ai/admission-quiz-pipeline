@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08110e;--panel:#0d1a14;--panel2:#11201a;--border:#24382f;--text:#e9efe9;--muted:#9bb0a6;--accent:#cda86a;--accent2:#0c6b53;--green:#3ad29a;--green-bg:#0f2c22;--red:#ff6b6b;--red-bg:#391a1a;--amber:#e0a63f;--amber-bg:#352a11;--brand-green:#00ab8e;--brand-gold:#b99b64;--serif:'Spectral',Georgia,serif}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;font-size:16px}
+  .top h1,details.chapter h2,.setup h2,.tsec h4,.results h2{font-family:var(--serif);letter-spacing:.005em}
+  header.top{position:sticky;top:0;z-index:50;background:rgba(5,10,8,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);border-top:3px solid var(--accent);padding:10px 16px}
+  .top-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+  .top h1{font-size:17px;margin:0;font-weight:650}
+  .tabs{display:flex;gap:6px;margin-left:auto}
+  .tab{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:9px;cursor:pointer;font-size:14px;font-family:inherit}
+  .tab.active{background:var(--accent2);border-color:var(--accent);color:#fff}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px 16px 80px}
+  .view{display:none}
+  .view.active{display:block}
+  .score{display:flex;gap:16px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:8px}
+  .score b{color:var(--text);font-variant-numeric:tabular-nums}
+  .bar{height:6px;background:var(--panel2);border-radius:6px;overflow:hidden;width:160px}
+  .bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--green));width:0%}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 18px}
+  .btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:7px 13px;border-radius:8px;cursor:pointer;font-size:13.5px;transition:.15s;font-family:inherit}
+  .btn:hover{border-color:var(--accent);color:#fff}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.active{background:var(--accent2);border-color:var(--accent);color:#fff}
+  .btn.primary{background:var(--accent2);border-color:var(--accent);color:#fff}
+  .btn.big{font-size:15px;padding:11px 22px;font-weight:600}
+  .toggle{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--muted);cursor:pointer;user-select:none}
+  .toggle input{accent-color:var(--accent);width:16px;height:16px}
+  .chapnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .chapnav a{font-size:13px;padding:5px 10px;background:var(--panel);border:1px solid var(--border);border-radius:20px;text-decoration:none;color:var(--muted)}
+  .chapnav a:hover{color:#fff;border-color:var(--accent)}
+  details.chapter{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:18px;overflow:hidden}
+  details.chapter>summary{cursor:pointer;list-style:none;padding:16px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  details.chapter>summary::-webkit-details-marker{display:none}
+  .chapter h2{margin:0;font-size:18px;font-weight:650}
+  .cap-tag{font-size:12px;color:var(--muted);background:var(--panel2);padding:3px 9px;border-radius:6px}
+  .chap-score{margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .excl-note{padding:0 18px 14px;color:var(--amber);font-size:13px;border-bottom:1px solid var(--border)}
+  .qlist{padding:6px 14px 14px}
+  .q{border:1px solid var(--border);border-radius:11px;padding:14px 15px;margin:12px 0;background:var(--panel2)}
+  .q.excluded{border-style:dashed;background:#1a1f25}
+  .q.answered.correct{border-color:var(--green)}
+  .q.answered.wrong{border-color:var(--red)}
+  .qhead{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:9px}
+  .qnum{font-weight:700;color:var(--accent);font-size:14px;min-width:34px}
+  .qstem{font-weight:550}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  .badge{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);white-space:nowrap}
+  .badge.excl{background:var(--amber-bg);color:#ffce7a;border-color:#5a4420}
+  .badge.src-oficial{background:var(--green-bg);color:#8ff0bd;border-color:#1f5436}
+  .badge.src-manual{background:#123038;color:#9fd2e0;border-color:#2a5563}
+  .badge.verify{background:var(--red-bg);color:#ffb0b0;border-color:#5a2727}
+  .opts{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+  .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:9px;cursor:pointer;font-size:14.5px;transition:.12s;font-family:inherit;line-height:1.45}
+  .opt:hover:not(:disabled){border-color:var(--accent);background:#17291f}
+  .opt:disabled{cursor:default}
+  .opt .letter{font-weight:700;color:var(--muted);min-width:18px}
+  .opt.correct{background:var(--green-bg);border-color:var(--green);color:#d6ffe8}
+  .opt.correct .letter{color:var(--green)}
+  .opt.wrong{background:var(--red-bg);border-color:var(--red);color:#ffdede}
+  .opt.wrong .letter{color:var(--red)}
+  .explain{margin-top:11px;padding:10px 12px;background:#0e1f18;border-left:3px solid var(--accent);border-radius:6px;font-size:13.5px;color:var(--muted);display:none}
+  .explain.show{display:block}
+  .explain b{color:var(--text)}
+  .explain .src{display:block;margin-top:6px;font-size:12px;opacity:.85}
+  .explain .note{color:#ffce7a;margin-top:6px;display:block}
+  .explain .why{color:#d6e9dd;margin-top:6px;display:block}
+  .explain .fix{color:#8fe3a6;margin-top:6px;display:block}
+  .explain .truth{display:block;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:.5px;color:var(--muted);font-size:12.5px}
+  .show-ans{font-size:12px;color:var(--accent);cursor:pointer;background:none;border:none;padding:4px 0;margin-top:6px;font-family:inherit}
+  /* training */
+  .setup{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 22px;max-width:720px}
+  .setup h2{margin:0 0 4px;font-size:20px}
+  .setup p.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+  .field{margin:18px 0}
+  .field>label{display:block;font-size:14px;color:var(--muted);margin-bottom:8px}
+  .field>label b{color:var(--accent);font-size:17px}
+  input[type=range]{width:100%;max-width:420px;accent-color:var(--accent)}
+  .quick{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+  .quick button{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-family:inherit}
+  .quick button:hover{border-color:var(--accent)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:7px 12px;border-radius:9px;cursor:pointer;font-size:13px;user-select:none;transition:.12s}
+  .chip.on{background:#15322a;border-color:var(--accent);color:#d6e9dd}
+  .chip .c-n{font-weight:700;margin-right:5px;color:var(--accent)}
+  #t-info{font-size:13.5px;color:var(--muted);margin:16px 0}
+  #t-info b{color:var(--text)}
+  #t-info .warn{color:var(--amber)}
+  .t-head{position:sticky;top:56px;z-index:20;display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px 15px;margin-bottom:14px}
+  .t-head .prog{font-weight:650;font-variant-numeric:tabular-nums}
+  .t-head .sc{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+  .t-head .bar{flex:1;min-width:80px}
+  .t-nav{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+  .t-nav .spacer{flex:1}
+  .results{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;max-width:760px;margin:0 auto}
+  .ring{width:130px;height:130px;border-radius:50%;margin:6px auto 14px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;background:conic-gradient(var(--green) var(--p,0%),var(--panel2) 0)}
+  .ring span{width:104px;height:104px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center}
+  .res-stats{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;color:var(--muted);font-size:14px;margin:6px 0 18px}
+  .res-stats b{color:var(--text);font-size:18px;display:block}
+  .wrong-list{text-align:left;margin-top:10px}
+  .wrong-list h3{font-size:15px;color:var(--amber);margin:18px 0 6px}
+  .tbody{padding:8px 16px 16px}
+  .tsec{margin:10px 0}
+  .tsec h4{margin:16px 0 6px;font-size:15px;color:var(--accent)}
+  .tsec ul{margin:0;padding-left:20px}
+  .tsec li{margin:5px 0;font-size:14px}
+  .tsec strong{color:#fff;font-weight:650}
+  figure.diag{margin:12px 0 18px;background:#0b1814;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;overflow-x:auto}
+  figure.diag svg{max-width:100%;height:auto}
+  figure.diag figcaption{color:var(--muted);font-size:11.5px;margin-top:8px}
+  figure.iframefig{padding:0;overflow:hidden}
+  .figframe{width:100%;border:0;display:block;border-radius:9px;background:#11151b;min-height:300px}
+  footer{max-width:1100px;margin:0 auto;padding:20px 16px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--border)}
+  mark{background:#3a3411;color:#ffe08a;padding:0 2px;border-radius:3px}
+  @media (max-width:600px){.tabs{margin-left:0;width:100%}.tab{flex:1}.bar{flex:1}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-row">
+    <h1>📋 {{TITLE}}</h1>
+    <div class="tabs">
+      <button class="tab active" data-mode="browse">📚 Recapitulare</button>
+      <button class="tab" data-mode="train">🎯 Antrenament</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- ============ RECAPITULARE ============ -->
+  <section id="view-browse" class="view active">
+    <div class="score">
+      <span>Corecte: <b id="sc-correct">0</b>/<b id="sc-answered">0</b></span>
+      <span>Incluse: <b id="sc-total">0</b></span>
+      <div class="bar"><span id="sc-bar"></span></div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="mode-study">Arată toate răspunsurile</button>
+      <label class="toggle"><input type="checkbox" id="tg-excluded"> Afișează întrebările excluse (din temele excluse)</label>
+      <button class="btn" id="reset" style="margin-left:auto">↺ Resetează progresul</button>
+    </div>
+    <div class="chapnav" id="chapnav"></div>
+    <div id="browse-root"></div>
+  </section>
+
+  <!-- ============ ANTRENAMENT ============ -->
+  <section id="view-train" class="view">
+    <div id="train-setup" class="setup">
+      <h2>🎯 Antrenament</h2>
+      <p class="sub">Alege câte întrebări vrei și din ce capitole. Întrebările sunt extrase și amestecate aleatoriu, cu feedback imediat și scor final.</p>
+      <div class="field">
+        <label>Număr de întrebări: <b id="t-count-lbl">30</b></label>
+        <input type="range" id="t-range" min="20" max="40" step="1" value="30">
+        <div class="quick"><button data-n="20">20</button><button data-n="25">25</button><button data-n="30">30</button><button data-n="35">35</button><button data-n="40">40</button></div>
+      </div>
+      <div class="field">
+        <label>Capitole de unde se extrag întrebările:</label>
+        <div class="chips" id="t-chips"></div>
+        <div class="quick"><button id="t-all">Toate</button><button id="t-none">Niciunul</button></div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="t-incl-excl"> Include și întrebările din temele excluse</label>
+      <div id="t-info"></div>
+      <button class="btn big primary" id="t-start">▶ Începe antrenamentul</button>
+    </div>
+
+    <div id="train-session" style="display:none">
+      <div class="t-head">
+        <button class="btn" id="t-quit">‹ Renunță</button>
+        <span class="prog" id="t-prog">1 / 30</span>
+        <span class="sc" id="t-sc">Corecte: 0</span>
+        <div class="bar"><span id="t-pbar"></span></div>
+      </div>
+      <div id="t-card"></div>
+      <div class="t-nav">
+        <button class="btn" id="t-prev">‹ Înapoi</button>
+        <span class="spacer"></span>
+        <button class="btn" id="t-next">Următoarea ›</button>
+        <button class="btn primary" id="t-finish">Vezi rezultatul ✓</button>
+      </div>
+    </div>
+
+    <div id="train-results" style="display:none"></div>
+  </section>
+
+  <!-- ============ TEORIE ============ -->
+<section id="view-theory" class="view"></section>
+</div>
+
+<footer>
+  <p><b>Surse răspunsuri:</b> <span class="badge src-oficial">cheie oficială</span> = din cheia de răspunsuri a culegerii-sursă · <span class="badge src-manual">din manual</span> = răspuns căutat în manualul-sursă, cu citat. Explicațiile și „forma corectă” sunt derivate din citatul afișat.</p>
+  <p>Întrebările marcate <span class="badge excl">exclus: …</span> aparțin subcapitolelor care nu intră în programa de examen — sunt păstrate și marcate, nu intră în scor și sunt scoase implicit din Antrenament. Progresul se salvează local în browser.</p>
+</footer>
+
+<script>
+const DATA = {"chapters":[]};
+const ST = loadState();
+function loadState(){try{return JSON.parse(localStorage.getItem('{{STORAGE_KEY}}')||'{}')}catch(e){return {}}}
+function saveState(){try{localStorage.setItem('{{STORAGE_KEY}}', JSON.stringify(ST))}catch(e){}}
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function hl(s){return esc(s).replace(/(EXCEP[ȚT]I[EA]|FALS[ĂAE]|(?:IN)?CORECT[ĂAE]|ADEV[ĂA]RAT[ĂAE])/g,'<mark>$1</mark>')}
+function qid(c,n){return 'c'+c+'q'+n}
+const LETTERS=['A','B','C','D','E'];
+
+function badgesHTML(q){
+  const srcLabel={oficial:'cheie oficială',manual:'din manual',exemplu:'exemplu'}[q.source]||q.source;
+  let b=`<span class="badge src-${q.source}">${srcLabel}</span>`;
+  if(q.source==='manual' && q.confidence==='low') b+=`<span class="badge verify">de verificat</span>`;
+  if(q.excluded) b+=`<span class="badge excl">exclus: ${esc(q.subsection)}</span>`;
+  return b;
+}
+function explainHTML(q){
+  const fix = q.fix?`<span class="fix">✅ Forma corectă (manual):${esc(q.fix).split('\n').map(function(x){return '<br>'+x;}).join('')}</span>`:'';
+  let src;
+  if(q.source==='manual'){ src=`<span class="src">📖 din manual${q.page?(', pag. '+q.page):''}${q.via?(' · '+esc(q.via)):''}${q.evidence?(' — „'+esc(q.evidence)+'"'):''}</span>`; }
+  else if(q.source==='exemplu'){ src=`<span class="src">🧪 exemplu demonstrativ${q.evidence?(' — „'+esc(q.evidence)+'"'):''}</span>`; }
+  else { src=`<span class="src">✔ cheie oficială${q.evidence?(' · manual: „'+esc(q.evidence)+'"'):''}</span>`; }
+  const why = q.why?`<span class="why">💡 ${esc(q.why)}${q.truth?`<span class="truth">${esc(q.truth)}</span>`:''}</span>`:'';
+  return `<b>Răspuns corect: ${q.answer||'—'}.</b>${why}${fix}${src}${q.note?`<span class="note">⚠ ${esc(q.note)}</span>`:''}`;
+}
+function optionsHTML(q){
+  let o='';
+  for(const L of LETTERS){ if(!(L in q.options)) continue;
+    o+=`<button class="opt" data-l="${L}"><span class="letter">${L}.</span><span>${esc(q.options[L])}</span></button>`; }
+  return o;
+}
+
+/* =================== RECAPITULARE =================== */
+let showExcluded=false, studyMode=false;
+function renderBrowse(){
+  const root=document.getElementById('browse-root'); root.innerHTML='';
+  const nav=document.getElementById('chapnav'); nav.innerHTML='';
+  DATA.chapters.forEach(ch=>{
+    const a=document.createElement('a'); a.href='#cap'+ch.num; a.textContent='Cap. '+ch.num+' · '+ch.title; nav.appendChild(a);
+    const det=document.createElement('details'); det.className='chapter'; det.open=true; det.id='cap'+ch.num;
+    const inc=ch.questions.filter(q=>!q.excluded).length;
+    det.innerHTML=`<summary><h2>Cap. ${ch.num}. ${esc(ch.title)}</h2>
+        <span class="cap-tag">${ch.questions.length} întrebări · ${inc} incluse</span>
+        <span class="chap-score" id="chs-${ch.num}"></span></summary>
+      <div class="excl-note">⚑ ${esc(ch.excl)}</div>
+      <div class="qlist" id="ql-${ch.num}"></div>`;
+    root.appendChild(det);
+    const ql=det.querySelector('#ql-'+ch.num);
+    ch.questions.forEach(q=>ql.appendChild(renderQ(ch.num,q)));
+  });
+  updateScores();
+}
+function renderQ(cap,q){
+  const id=qid(cap,q.num);
+  const div=document.createElement('div');
+  div.className='q'+(q.excluded?' excluded':''); div.dataset.id=id; div.dataset.excluded=q.excluded?'1':'0';
+  if(q.excluded && !showExcluded) div.style.display='none';
+  div.innerHTML=`<div class="qhead"><span class="qnum">${q.num}.</span><span class="qstem">${hl(q.stem)}</span><span class="badges">${badgesHTML(q)}</span></div>
+    <div class="opts">${optionsHTML(q)}</div>
+    <button class="show-ans" data-act="reveal">Arată răspunsul</button>
+    <div class="explain">${explainHTML(q)}</div>`;
+  div.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(cap,q,div,b.dataset.l)));
+  div.querySelector('[data-act=reveal]').addEventListener('click',()=>reveal(div,q,true));
+  const prev=ST[id];
+  if(prev){ markChosen(div,q,prev); } else if(studyMode){ reveal(div,q,false); }
+  return div;
+}
+function markChosen(div,q,chosen){
+  div.classList.add('answered'); div.classList.add(chosen===q.answer?'correct':'wrong');
+  div.querySelectorAll('.opt').forEach(b=>{ b.disabled=true;
+    if(b.dataset.l===q.answer) b.classList.add('correct');
+    if(b.dataset.l===chosen && chosen!==q.answer) b.classList.add('wrong'); });
+  div.querySelector('.explain').classList.add('show');
+  const sa=div.querySelector('.show-ans'); if(sa) sa.style.display='none';
+}
+function choose(cap,q,div,L){ if(div.classList.contains('answered'))return;
+  ST[qid(cap,q.num)]=L; saveState(); markChosen(div,q,L); updateScores(); }
+function reveal(div,q,lock){ div.querySelectorAll('.opt').forEach(b=>{ if(b.dataset.l===q.answer)b.classList.add('correct'); if(lock)b.disabled=true; });
+  div.querySelector('.explain').classList.add('show'); const sa=div.querySelector('.show-ans'); if(sa) sa.style.display='none'; }
+function updateScores(){
+  let tot=0,ans=0,cor=0;
+  DATA.chapters.forEach(ch=>{ let ct=0,ca=0,cc=0;
+    ch.questions.forEach(q=>{ if(q.excluded)return; ct++;
+      const v=ST[qid(ch.num,q.num)]; if(v){ca++; if(v===q.answer)cc++;} });
+    tot+=ct;ans+=ca;cor+=cc;
+    const el=document.getElementById('chs-'+ch.num); if(el) el.textContent= ca? `${cc}/${ca} corecte`:''; });
+  document.getElementById('sc-correct').textContent=cor;
+  document.getElementById('sc-answered').textContent=ans;
+  document.getElementById('sc-total').textContent=tot;
+  document.getElementById('sc-bar').style.width=(tot?Math.round(ans/tot*100):0)+'%';
+}
+document.getElementById('tg-excluded').addEventListener('change',e=>{ showExcluded=e.target.checked;
+  document.querySelectorAll('#browse-root .q').forEach(d=>{ if(d.dataset.excluded==='1') d.style.display=showExcluded?'':'none'; }); });
+document.getElementById('mode-study').addEventListener('click',function(){ studyMode=true;
+  document.querySelectorAll('#browse-root .q').forEach(d=>{ const q=findQ(d.dataset.id); const ex=d.querySelector('.explain'); if(ex)ex.classList.add('show');
+    d.querySelectorAll('.opt').forEach(b=>{ if(q&&b.dataset.l===q.answer)b.classList.add('correct'); });
+    const sa=d.querySelector('.show-ans'); if(sa)sa.style.display='none'; });
+  this.classList.add('active'); });
+document.getElementById('reset').addEventListener('click',()=>{ if(confirm('Ștergi tot progresul salvat din Recapitulare?')){ for(const k in ST)delete ST[k]; saveState(); location.reload(); } });
+function findQ(id){ for(const ch of DATA.chapters) for(const q of ch.questions) if(qid(ch.num,q.num)===id) return q; return null; }
+
+/* =================== ANTRENAMENT =================== */
+const POOL=[];
+DATA.chapters.forEach(ch=>ch.questions.forEach(q=>{ if(q.answer) POOL.push({cap:ch.num, title:ch.title, q}); }));
+const trainSel=new Set(DATA.chapters.map(c=>c.num));
+let trainIncl=false, trainCount=30, session=null;
+
+function trainPool(){ return POOL.filter(p=> trainSel.has(p.cap) && (trainIncl || !p.q.excluded)); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+function renderSetup(){
+  const chips=document.getElementById('t-chips'); chips.innerHTML='';
+  DATA.chapters.forEach(ch=>{
+    const inc=ch.questions.filter(q=>q.answer && (trainIncl || !q.excluded)).length;
+    const c=document.createElement('div'); c.className='chip'+(trainSel.has(ch.num)?' on':''); c.dataset.cap=ch.num;
+    c.innerHTML=`<span class="c-n">C${ch.num}</span>${esc(ch.title)} <span style="opacity:.6">(${inc})</span>`;
+    c.addEventListener('click',()=>{ if(trainSel.has(ch.num))trainSel.delete(ch.num); else trainSel.add(ch.num); renderSetup(); });
+    chips.appendChild(c);
+  });
+  updateTrainInfo();
+}
+function updateTrainInfo(){
+  const pool=trainPool().length;
+  const n=Math.min(trainCount, pool);
+  const info=document.getElementById('t-info');
+  let msg=`Vor fi extrase <b>${n}</b> întrebări din <b>${pool}</b> disponibile (${trainSel.size} capitole selectate).`;
+  if(pool<trainCount) msg+=` <span class="warn">— sunt mai puține de ${trainCount}, se vor folosi toate ${pool}.</span>`;
+  if(pool===0) msg=`<span class="warn">Niciun capitol selectat / nicio întrebare disponibilă.</span>`;
+  info.innerHTML=msg;
+  document.getElementById('t-start').disabled = pool===0;
+}
+const rng=document.getElementById('t-range');
+rng.addEventListener('input',()=>{ trainCount=+rng.value; document.getElementById('t-count-lbl').textContent=trainCount; updateTrainInfo(); });
+document.querySelectorAll('#train-setup .quick button[data-n]').forEach(b=>b.addEventListener('click',()=>{ trainCount=+b.dataset.n; rng.value=trainCount; document.getElementById('t-count-lbl').textContent=trainCount; updateTrainInfo(); }));
+document.getElementById('t-all').addEventListener('click',()=>{ DATA.chapters.forEach(c=>trainSel.add(c.num)); renderSetup(); });
+document.getElementById('t-none').addEventListener('click',()=>{ trainSel.clear(); renderSetup(); });
+document.getElementById('t-incl-excl').addEventListener('change',e=>{ trainIncl=e.target.checked; renderSetup(); });
+document.getElementById('t-start').addEventListener('click',()=>startTrain());
+
+function startTrain(items){
+  const list = items || shuffle(trainPool().slice()).slice(0, Math.min(trainCount, trainPool().length));
+  if(!list.length) return;
+  session={items:list, idx:0, ans:new Array(list.length).fill(null)};
+  document.getElementById('train-setup').style.display='none';
+  document.getElementById('train-results').style.display='none';
+  document.getElementById('train-session').style.display='block';
+  renderTQ(); window.scrollTo(0,0);
+}
+function renderTQ(){
+  const s=session, p=s.items[s.idx], q=p.q;
+  document.getElementById('t-prog').textContent=`${s.idx+1} / ${s.items.length}`;
+  const cor=s.ans.reduce((a,v,i)=>a+(v && v===s.items[i].q.answer?1:0),0);
+  document.getElementById('t-sc').textContent=`Corecte: ${cor}`;
+  document.getElementById('t-pbar').style.width=Math.round((s.idx+1)/s.items.length*100)+'%';
+  document.getElementById('t-prev').disabled = s.idx===0;
+  document.getElementById('t-next').disabled = s.idx===s.items.length-1;
+  const card=document.getElementById('t-card');
+  card.className='q'; card.dataset.cap=p.cap;
+  card.innerHTML=`<div class="qhead"><span class="qnum">Cap.${p.cap}</span><span class="qstem">${hl(q.stem)}</span><span class="badges">${badgesHTML(q)}</span></div>
+    <div class="opts">${optionsHTML(q)}</div>
+    <div class="explain">${explainHTML(q)}</div>`;
+  const chosen=s.ans[s.idx];
+  card.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>answerT(b.dataset.l));
+    if(chosen!=null){ b.disabled=true;
+      if(b.dataset.l===q.answer)b.classList.add('correct');
+      if(b.dataset.l===chosen && chosen!==q.answer)b.classList.add('wrong'); }
+  });
+  if(chosen!=null){ card.classList.add('answered', chosen===q.answer?'correct':'wrong'); card.querySelector('.explain').classList.add('show'); }
+}
+function answerT(L){
+  const s=session; if(s.ans[s.idx]!=null) return;
+  s.ans[s.idx]=L; renderTQ();
+}
+document.getElementById('t-prev').addEventListener('click',()=>{ if(session.idx>0){session.idx--;renderTQ();} });
+document.getElementById('t-next').addEventListener('click',()=>{ if(session.idx<session.items.length-1){session.idx++;renderTQ();} });
+document.getElementById('t-quit').addEventListener('click',()=>{ if(confirm('Renunți la acest antrenament?')) backToSetup(); });
+document.getElementById('t-finish').addEventListener('click',()=>finishT());
+function backToSetup(){
+  session=null;
+  document.getElementById('train-session').style.display='none';
+  document.getElementById('train-results').style.display='none';
+  document.getElementById('train-setup').style.display='block';
+  renderSetup();
+}
+function finishT(){
+  const s=session; const N=s.items.length;
+  let cor=0,wrong=0,un=0; const wrongItems=[];
+  s.items.forEach((p,i)=>{ const a=s.ans[i];
+    if(a==null){un++; wrongItems.push(p);}
+    else if(a===p.q.answer){cor++;}
+    else {wrong++; wrongItems.push({...p, given:a});} });
+  const pct=Math.round(cor/N*100);
+  const res=document.getElementById('train-results');
+  let wl='';
+  if(wrongItems.length){
+    wl='<div class="wrong-list"><h3>De recapitulat ('+wrongItems.length+')</h3>';
+    wrongItems.forEach(p=>{ const q=p.q;
+      wl+=`<div class="q answered wrong"><div class="qhead"><span class="qnum">Cap.${p.cap}</span><span class="qstem">${hl(q.stem)}</span><span class="badges">${badgesHTML(q)}</span></div>
+        <div class="opts">`;
+      for(const L of LETTERS){ if(!(L in q.options))continue; let cls='opt';
+        if(L===q.answer)cls+=' correct'; if(p.given && L===p.given && L!==q.answer)cls+=' wrong';
+        wl+=`<div class="${cls}" style="cursor:default"><span class="letter">${L}.</span><span>${esc(q.options[L])}</span></div>`; }
+      wl+=`</div><div class="explain show">${explainHTML(q)}${p.given?'':'<span class="note">⚠ Fără răspuns.</span>'}</div></div>`;
+    });
+    wl+='</div>';
+  }
+  res.innerHTML=`<div class="results">
+      <div class="ring" style="--p:${pct}%"><span>${pct}%</span></div>
+      <h2 style="margin:0 0 4px">Ai răspuns corect la ${cor} din ${N}</h2>
+      <div class="res-stats"><div><b>${cor}</b> corecte</div><div><b>${wrong}</b> greșite</div>${un?`<div><b>${un}</b> fără răspuns</div>`:''}</div>
+      <div class="t-nav" style="justify-content:center">
+        ${wrongItems.length?'<button class="btn primary" id="t-retry">↻ Reia greșitele ('+wrongItems.length+')</button>':''}
+        <button class="btn" id="t-new">＋ Antrenament nou</button>
+      </div>
+      ${wl}
+    </div>`;
+  document.getElementById('train-session').style.display='none';
+  res.style.display='block'; window.scrollTo(0,0);
+  if(wrongItems.length) document.getElementById('t-retry').addEventListener('click',()=>startTrain(shuffle(wrongItems.map(p=>({cap:p.cap,title:p.title,q:p.q})))));
+  document.getElementById('t-new').addEventListener('click',backToSetup);
+}
+
+/* =================== TABS =================== */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  const m=t.dataset.mode;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));
+  ['browse','train','theory'].forEach(v=>document.getElementById('view-'+v).classList.toggle('active', m===v));
+  window.scrollTo(0,0);
+}));
+// theory chapter nav
+(function(){const nav=document.getElementById('theonav'); if(!nav)return;
+  document.querySelectorAll('#view-theory details.chapter').forEach(d=>{
+    const h=d.querySelector('h2'); if(!h)return;
+    const a=document.createElement('a'); a.href='#'+d.id; a.textContent=h.textContent; nav.appendChild(a);
+  });})();
+
+renderBrowse();
+renderSetup();
+</script>
+</body>
+</html>
